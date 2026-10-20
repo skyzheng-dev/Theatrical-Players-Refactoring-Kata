@@ -34,11 +34,25 @@ class ComedyCalculator(PerformanceCalculator):
         return super().volume_credits() + math.floor(self.performance['audience'] / 5)
 
 
+class HistoricalCalculator(PerformanceCalculator):
+    def amount(self):
+        result = 50000
+        if self.performance['audience'] > 20:
+            result += 1500 * (self.performance['audience'] - 20)
+        return result
+
+    def volume_credits(self):
+        # historical plays don't get the base "over 30" credits, only 1 per 5 people
+        return math.floor(self.performance['audience'] / 5)
+
+
 def create_performance_calculator(performance, play):
     if play['type'] == "tragedy":
         return TragedyCalculator(performance, play)
     if play['type'] == "comedy":
         return ComedyCalculator(performance, play)
+    if play['type'] == "historical":
+        return HistoricalCalculator(performance, play)
     raise ValueError(f'unknown type: {play["type"]}')
 
 
