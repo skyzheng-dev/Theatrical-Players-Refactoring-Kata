@@ -71,36 +71,20 @@ Comedy performances add a $100 surcharge plus $5 per person once the number of a
 
 ## Part 4 – Extend the Application
 
-Part 4 – Extend the Application
-After finishing the refactoring, I added support for a new play type called "historical". The rules are:
-- Base charge of $500.
-- For an audience larger than 20, add $15 per person beyond 20.
-- 1 volume credit for every 5 audience members (rounded down).
+What I did:
 
-How I added it:
-Because of the polymorphism refactoring in Part 2, adding a new play type only needed two changes in create_statement_data.py:
 1. A new HistoricalCalculator class (a subclass of PerformanceCalculator) with its own amount() and volume_credits().
 2. One new check in create_performance_calculator that returns a HistoricalCalculator when the play type is "historical".
-I did not need to change TragedyCalculator, ComedyCalculator, statement.py, or the formatting code at all, so the original play types keep their behavior.
+   I did not need to change TragedyCalculator, ComedyCalculator, statement.py, or the formatting code at all, so the original play types keep their behavior.
+3. I also wrote 3 more tests to check the example provided, the required boundary case of audience size of 20 people = $500.00, and 21 people = $515.00, and how tragedy and comedy charges are unchanged when a histroical play is included in the same purchase.
 
-One design decision: HistoricalCalculator overrides volume_credits() completely instead of adding to the base class rule. The base rule gives 1 credit for each audience member over 30, but the historical rules only give 1 credit per 5 people. The example in the assignment confirms this: an audience of 35 should earn 7 credits (35 / 5). If historical plays also got the base credits, it would be 5 + 7 = 12 credits.
-
-Tests for historical plays (in tests/test_historical.py):
-- test_historical_example_from_spec: checks the example from the assignment. An audience of 35 is charged $725.00 ($500 + 15 x $15) and earns 7 credits.
-- test_historical_audience_boundary_at_20: boundary test with an audience of exactly 20 and 21. At 20, the charge is just the $500.00 base. At 21, $15 is added for $515.00. Both earn 4 credits, for 8 total.
-- test_historical_with_original_play_types: puts a tragedy, a comedy, and a historical play on the same invoice. This checks that the original play types are still charged the same as before ($650.00 for Hamlet and $580.00 for As You Like It, same as the original approved output) when a historical play is added.
-
-The supplied test_statement_with_new_play_types still passes, since its plays use the types "history" and "pastoral", which are still unknown and still raise a ValueError.
-
-Final test results:
-python -m pytest -v
-
-tests/test_historical.py::test_historical_example_from_spec PASSED        [ 14%]
-tests/test_historical.py::test_historical_audience_boundary_at_20 PASSED  [ 28%]
+Results:
+tests/test_historical.py::test_historical_example_from_spec PASSED [ 14%]
+tests/test_historical.py::test_historical_audience_boundary_at_20 PASSED [ 28%]
 tests/test_historical.py::test_historical_with_original_play_types PASSED [ 42%]
-tests/test_statement.py::test_example_statement PASSED                    [ 57%]
-tests/test_statement.py::test_statement_with_new_play_types PASSED        [ 71%]
-tests/test_statement.py::test_tragedy_audience_boundary_at_30 PASSED      [ 85%]
-tests/test_statement.py::test_comedy_audience_boundary_at_20 PASSED       [100%]
+tests/test_statement.py::test_example_statement PASSED [ 57%]
+tests/test_statement.py::test_statement_with_new_play_types PASSED [ 71%]
+tests/test_statement.py::test_tragedy_audience_boundary_at_30 PASSED [ 85%]
+tests/test_statement.py::test_comedy_audience_boundary_at_20 PASSED [100%]
 
 7 passed
