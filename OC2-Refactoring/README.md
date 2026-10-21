@@ -127,4 +127,4 @@ For the problems I found in Part 1, the long statement function is fixed since e
 
 ### Use of Generative AI
 
-I used Claude (Anthropic) to help me understand Fowler's refactoring steps, understand coding techniques, help debug, generate mock data for "historical" play type, and draft parts of this README documentation. I reviewed every change, wrote the refactored code, ran the tests after each step, and made sure I understood the design decisions.
+I used Claude (Anthropic) to help me understand Fowler's refactoring steps, understand coding techniques, help debug, generate mock data for "historical" play type, and draft parts of this README documentation. I reviewed every change, wrote the refactored code and the tests with the assistance of Claude, ran the tests after each step, and made sure I understood the design decisions.
