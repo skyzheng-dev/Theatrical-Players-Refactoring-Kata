@@ -74,9 +74,8 @@ Comedy performances add a $100 surcharge plus $5 per person once the number of a
 What I did:
 
 1. A new HistoricalCalculator class (a subclass of PerformanceCalculator) with its own amount() and volume_credits().
-2. One new check in create_performance_calculator that returns a HistoricalCalculator when the play type is "historical".
-   I did not need to change TragedyCalculator, ComedyCalculator, statement.py, or the formatting code at all, so the original play types keep their behavior.
-3. I also wrote 3 more tests to check the example provided, the required boundary case of audience size of 20 people = $500.00, and 21 people = $515.00, and how tragedy and comedy charges are unchanged when a histroical play is included in the same purchase.
+2. One new check in create_performance_calculator that returns a HistoricalCalculator when the play type is "historical". I did not need to change TragedyCalculator, ComedyCalculator, statement.py, or the formatting code at all, so the original play types keep their behavior. HistoricalCalculator basically replaces volume_credits() completely instead of building on the original class rule, because historical plays don't have the "1 credit per person over 30" rule.
+3. I also wrote 3 more tests in test_historical.py to check the example provided (35 people = $725.00 and 7 credits), the required boundary case of audience size of 20 people = $500.00, and 21 people = $515.00, and how tragedy and comedy charges are unchanged when a histroical play is included in the same purchase.
 
 Results:
 tests/test_historical.py::test_historical_example_from_spec PASSED [ 14%]
@@ -88,3 +87,44 @@ tests/test_statement.py::test_tragedy_audience_boundary_at_30 PASSED [ 85%]
 tests/test_statement.py::test_comedy_audience_boundary_at_20 PASSED [100%]
 
 7 passed
+
+## Part 5 – Documentation and Reflection
+
+### Tools and commands
+
+I used Python for the language, pytest for testing (listed in requirements.txt), and these following commands to set up the virtual environment:
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m pytest -v
+
+### Test Results
+
+- Initial results: 2 passed (see 3. in Part 1).
+- Final results: 7 passed (see 3. in Part 4).
+- The new tests are explained in Part 3 (two boundary tests for existing behavior) and Part 4 (three tests for historical plays).
+
+### My four refactoring code
+
+See Part 2 for the four refactoring steps.
+
+### Reflection
+
+I think the refactoring that helped the most was replacing the if/elif on play type with classes (polymorphism). In the original code, the play type was checked in two places, once for the price and once for the credits. So the rules for tragedy and comedy were spread out and mixed together. Now each play type has its own class with all of its rules in one place. The rest of the code just calls amount() and volume_credits() and doesn't need to know what type of play it is. Splitting the calculations from the formatting also helped a lot, because it made this step much easier to do, but the classes are what made the code easy to add to.
+
+Refactoring is different from adding functionality because when you refactor, the program should do exactly the same thing as before. You are only changing how the code is organized. One example of this in my project was the comedy credits. The original comment said comedy gives extra credit for "every ten" people, but the code actually divides by 5. It looked like a bug, but I kept it as 5 because changing it would change the output, and then it wouldn't be refactoring anymore. If it is a bug, it should be fixed as a separate change with updated tests. Adding historical plays was different because the whole point was to change what the program does, so I did it after the refactoring was done and wrote new tests for it.
+
+The new design made adding historical plays pretty easy. I only had to add a HistoricalCalculator class and one more if statement in create_performance_calculator. I didn't have to change the tragedy, comedy, or formatting code, so I wasn't worried about breaking anything. The one thing I had to think about was the credits. Historical plays don't get the normal "1 credit per person over 30", so HistoricalCalculator has its own volume_credits() instead of using the one from the base class. With the original code, I would have had to add another branch to both if/elif blocks and make sure it didn't mess up the comedy credit check.
+
+For the problems I found in Part 1, the long statement function is fixed since each part now does one thing. The confusing money numbers are only partly fixed. They are still in cents, but now each one is inside a class with a clear name, so it's easier to tell what it's for. The dictionaries with string keys are not fixed. I left them because the tests and JSON files use them, but changing them to a class or dataclass would be a good next step.
+
+### Attribution
+
+- Original repository: Theatrical Players Refactoring Kata by Emily Bache, https://github.com/emilybache/Theatrical-Players-Refactoring-Kata, based on the first chapter of Martin Fowler's Refactoring (2nd edition).
+- Sky Zheng
+- October 20, 2026
+- I refactored statement.py into two separate modules: create_statement_data.py for calculations and statement.py for formatting text outputs, replaced the if/else conditionals with calculator classes (polymorphism), added two boundary tests, and added three more tests for the "historical" play type.
+
+### Use of Generative AI
+
+I used Claude (Anthropic) to help me understand Fowler's refactoring steps, understand coding techniques, help debug, and draft parts of this README documentation. I reviewed every change, wrote my own code, ran the tests after each step, and made sure I understood the design decisions.
