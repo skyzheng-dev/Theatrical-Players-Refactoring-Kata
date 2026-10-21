@@ -7,7 +7,7 @@
 
 2. Identify at least three aspects of the existing implementation that make it difficult to understand,
    maintain, or extend.
-   a. The statement function is a very long function that already hints a need of refactoring. Long functions are typically not good especially when handling multiple processes such as calculating prices, credits, and formmatting the output text. This makes it hard to fix bugs when certain parts of the program fails and makes it so that you have to consider the whole scope of the program to identify what is actually causing an error. This makes testing also very memory intensive because you have to call the whole function in order to test certain parts of the algorithm.
+   a. The statement function is a very long function that already hints a need of refactoring. Long functions are typically not good especially when handling multiple processes such as calculating prices, credits, and formmatting the output text. This makes it hard to fix bugs when certain parts of the program fails and makes it so that you have to consider the whole scope of the program to identify what is actually causing an error. This makes testing also very convoluted because you have to call the whole function in order to test certain parts of the algorithm.
    b. The numbers are also not explicitly said to be in a certain conversion. Just initially looking at it, the number 40000 seems like it would be 40,000 but after examining the example test statement, I realized that it's actually $400.00. So a simple comment that specifies the number's value or a decimal conversion of all of the numbers would be beneficial in helping me understand what the numbers mean.
    c. It seems like data are being passed using dictionaries. This is risky because lookups like invoice['performances'] or perf['audience'] are string kets with no type checking. So, a simple typo for the string key would cause a lot of confusions when the code runs.
 
@@ -67,7 +67,7 @@ Test 1: test_tragedy_audience_boundary_at_30
 Tragedy performances charge extra and give volume credits only for audience members over 30. This test checks if the number of audiences is exactly 30 ($400.00, 0 credits) and 31 ($410.00, 1 credit). It makes sure nothing extra is charged or credited at 30, and that the extra starts at 31.
 
 Test 2: test_comedy_audience_boundary_at_20
-Comedy performances add a $100 surcharge plus $5 per person once the number of audiences is over 20, and give 1 bonus credit per 5 people. This test checks if an audience of exactly 20 people ($360.00) and 21 ($468.00), with 8 credits in total. It would catch an off-by-one mistake such as >= 20 instead of > 20, and it also checks the comedy bonus credit rule.
+Comedy performances add a $100 surcharge plus $5 per person once the number of audiences is over 20, and give 1 bonus credit per 5 people. This test checks for an audience of exactly 20 people ($360.00) and 21 people ($468.00), with 8 credits in total. It would catch an off-by-one mistake such as >= 20 instead of > 20, and it also checks the comedy bonus credit rule.
 
 ## Part 4 – Extend the Application
 
@@ -92,7 +92,7 @@ tests/test_statement.py::test_comedy_audience_boundary_at_20 PASSED [100%]
 
 ### Tools and commands
 
-I used Python for the language, pytest for testing (listed in requirements.txt), and these following commands to set up the virtual environment:
+I used Python for the language, pytest, approvaltests, and pytest-approvaltests for testing (listed in requirements.txt), and these following commands to set up the virtual environment (make sure you cd into the project directory):
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -104,7 +104,7 @@ python -m pytest -v
 - Final results: 7 passed (see 3. in Part 4).
 - The new tests are explained in Part 3 (two boundary tests for existing behavior) and Part 4 (three tests for historical plays).
 
-### My four refactoring code
+### My four refactored code steps
 
 See Part 2 for the four refactoring steps.
 
@@ -127,4 +127,4 @@ For the problems I found in Part 1, the long statement function is fixed since e
 
 ### Use of Generative AI
 
-I used Claude (Anthropic) to help me understand Fowler's refactoring steps, understand coding techniques, help debug, and draft parts of this README documentation. I reviewed every change, wrote my own code, ran the tests after each step, and made sure I understood the design decisions.
+I used Claude (Anthropic) to help me understand Fowler's refactoring steps, understand coding techniques, help debug, generate mock data for "historical" play type, and draft parts of this README documentation. I reviewed every change, wrote the refactored code, ran the tests after each step, and made sure I understood the design decisions.
